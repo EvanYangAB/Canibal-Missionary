@@ -4,7 +4,9 @@ import java.util.*;
 public class Node {
 	int ml, mr, cl, cr;
 	static ArrayList<Node> searchQueue = new ArrayList<Node>();
-	boolean pBoat; 			//false is right, true is left;
+	// position of the boat.
+	// false represents the right side of the river, true represents the left;
+	boolean pBoat; 	
 	Node parentNode;
 	int depth;
 	ArrayList<Node> searchQueueBackup = new ArrayList<Node>();
@@ -12,7 +14,7 @@ public class Node {
 	static int count = 0;
 	final int MAX_DEPTH = 12;
 
-	//constructor
+	// constructor
 	public Node(int mlIn, int mrIn, int clIn, int crIn, boolean pBoatIn, Node parentNodeIn, int depthIn){
 		ml = mlIn;
 		mr = mrIn;
@@ -22,7 +24,7 @@ public class Node {
 		parentNode = parentNodeIn;
 		depth = depthIn;
 	}
-	//copy constructor
+	// copy constructor
 	public Node(Node copinIn, Node parentNodeIn){
 		this(copinIn.getML(), copinIn.getMR(), copinIn.getCL(), copinIn.getCR(), copinIn.getPBoat(), parentNodeIn, parentNodeIn.getDepth() + 1);
 		searchQueueBackup = copinIn.getSearchQueue();
@@ -32,6 +34,7 @@ public class Node {
 		searchQueue.add(baseIn);
 	}
 
+	// bunch of getters
 	public int getML(){
 		return  ml;
 	}
@@ -64,14 +67,15 @@ public class Node {
 		return depth;
 	}
 
-	//check whether the current node is looping
+	// checks whether the current node is looping and end this thread if
+	// it is looping.
 	public boolean sameAsParent(Node nodeIn){
 		if(parentNode == null)
 			return false;
 		return nodeIn.equals(parentNode) || parentNode.sameAsParent(nodeIn);
 	}
 
-	//Goal Test
+	// Goal Test
 	public boolean goalTest(){
 		if(ml == 0 && mr == 3 && cl == 0 && cr == 3 && pBoat == false){
 			System.out.println("success on "+ depth + "-----");
@@ -81,8 +85,9 @@ public class Node {
 		return false;
 	}
 
-	//return true if fails
-	//compare to parent node status and evaluate boat
+	// the Failure Test
+	// returns true if fails
+	// compares to parent node status for avalibility and evaluates boat position
 	public boolean failB(){
 		if(ml < 0 || mr < 0 || cl < 0 || cr < 0)
 			return true;
@@ -95,7 +100,7 @@ public class Node {
 		return false;
 	}
 
-	//main search process for each node, search the queue for the current node
+	//main search process. search the queue for the current node
 	//as long as it is not empty
 	public static void process(){
 		while(searchQueue.size() != 0){
@@ -104,7 +109,9 @@ public class Node {
 			temp.nProcess();
 		}
 	}
-	//nProcess stands for node process
+
+	// nProcess stands for node process. generates more nodes and
+	// push them into the un-searched que.
 	public void nProcess(){
 		if(searchQueueBackup.size() == 0){
 			count ++;
@@ -122,17 +129,17 @@ public class Node {
 
 	}
 
-	//change the searched array's parent node to the current
-	//node for result showing
+	// change the searched array's parent node to the current
+	// node for substitution of searched nodes.
 	public void updateParentNode(ArrayList<Node> sqb){
 		for(Node n : sqb)
 			n = new Node(n, this);
 	}
 
-	//operator
-	//determines two things:
-	//1) if all parent nodes has this node
-	//2) if this node had been processed
+	// operator
+	// determines two things:
+	// 1) if all parent nodes has this node
+	// 2) if this node had been processed
 	public void generateSubnodes(){
 		if(pBoat == true)
 			for(int i = 0; i < 3; i++)
@@ -150,16 +157,16 @@ public class Node {
 				}
 	}
 
-	//add one node to the search queue, backup queue, and
-	//the searched queue.
+	// add one node to the search queue, backup queue, and
+	// the searched queue.
 	public void searchAdd(Node temp){
 		searchQueue.add(temp);
 		searchQueueBackup.add(temp);
 		searched.add(temp);
 	}
 
-	//determin whether it is unique; if not, return the previously searched node
-	//for optimal purposes
+	// determin whether it is unique; if not, return the previously searched node
+	// for optimal purposes
 	public boolean unique(){
 		for(Node temp : searched)
 			if(this.equals(temp) && this != temp)
@@ -168,7 +175,7 @@ public class Node {
 
 	}
 
-	//Document the childnode success for reuse purposes
+	// Document the childnode success for reuse purposes
 	public void success(){
 		if(parentNode != null)
 			parentNode.success();
@@ -177,6 +184,7 @@ public class Node {
 		return;
 	}
 
+	// the toString method. Just to get a good look at the nodes
 	@Override
 	public String toString(){
 		String result = "";
